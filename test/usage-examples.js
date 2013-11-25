@@ -9,7 +9,13 @@ describe('Usage Examples', function () {
       conf.set('a', 'b');
       expect(conf.get('a')).toBe('b');
     });
-    xit('should store and retrieve properties separated by dots', function () {
+    xit('should store and retrieve simple properties', function () {
+      conf.set('a', 'b');
+      conf.set('c', 'd');
+      expect(conf.get('c')).toBe('d');
+      expect(conf.get('a')).toBe('b');
+    });
+    it('should store and retrieve properties separated by dots', function () {
       conf.set('a.b', 'c');
       expect(conf.get('a.b')).toBe('c');
     });
@@ -17,13 +23,14 @@ describe('Usage Examples', function () {
       expect(conf.get('unknown')).toBeUndefined();
     });
     xit('should gracefully deal with unknown hierarchical properties', function () {
+      conf.set('known', 'a')
       expect(conf.get('unknown.doesnt.exist')).toBeUndefined();
     });
-    xit('should not leak data between instances', function () {
+    it('should not leak data between instances', function () {
       conf.set('a.b', 'c');
       expect(jsConfig.new().get('a.b')).toBeUndefined();
     });
-    xit('should support setting the default', function () {
+    it('should support setting the default', function () {
       conf.setDefault('a', 'b');
       expect(conf.get('a')).toBe('b');
     });
