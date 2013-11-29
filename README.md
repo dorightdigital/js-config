@@ -14,3 +14,8 @@ but create or re-use a test inside [test/unit-tests](test/unit-tests) (and add
 it to [SpecRunner](test/jasmine/SpecRunner.html) of course).
 
 If you think there's a missing feature create some failing tests, then mark them as 'xit' and send a pull request.
+
+Note
+---
+
+At this stage dev branch is being used to teach javascript principles, if you think the entire design could be improved feel free to raise a pull request... as long as it passes the same tests.
