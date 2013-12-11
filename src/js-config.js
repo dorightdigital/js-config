@@ -4,12 +4,12 @@ var jsConfig = {new: function () {
 
     set: function (key, value){
       var clone = function(obj) {
+        var newObj = {}, prop;
         if (typeof(obj) === 'string') {
           return obj;
         }
         else {
-          var newObj = {};
-          for (var prop in obj) {
+          for (prop in obj) {
             if (obj.hasOwnProperty(prop)) {
               newObj[prop] = obj[prop];
             }
