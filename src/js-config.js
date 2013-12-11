@@ -1,22 +1,23 @@
 var jsConfig = {new: function () {
   var data = {};
+  var clone = function(value) {
+    var newObj = {}, prop;
+    if (typeof(value) === 'string' || value === undefined) {
+      return value;
+    }
+    else {
+      for (prop in value) {
+        if (value.hasOwnProperty(prop)) {
+          newObj[prop] = value[prop];
+        }
+      }
+    }
+    return newObj;
+  };
+
   return {
 
     set: function (key, value){
-      var clone = function(obj) {
-        var newObj = {}, prop;
-        if (typeof(obj) === 'string') {
-          return obj;
-        }
-        else {
-          for (prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-              newObj[prop] = obj[prop];
-            }
-          }
-        }
-        return newObj;
-      };
       var keys = key.split('.');
       if (keys[1] === undefined) {
         data[key]=clone(value);
@@ -36,13 +37,13 @@ var jsConfig = {new: function () {
     get: function (key){
       var keys = key.split('.');
       if (keys[1] === undefined) {
-        return data[key];
+        return clone(data[key]);
       }
       else {
         if (data[keys[0]] === undefined){
           return undefined;
         }
-        return data[keys[0]][keys[1]]
+        return clone(data[keys[0]][keys[1]]);
       }
     }
   }

@@ -22,7 +22,7 @@ describe('Usage Examples', function () {
     it('should gracefully deal with unknown properties', function () {
       expect(conf.get('unknown')).toBeUndefined();
     });
-    xit('should gracefully deal with unknown hierarchical properties', function () {
+    it('should gracefully deal with unknown hierarchical properties', function () {
       conf.set('known', 'a')
       expect(conf.get('unknown.doesnt.exist')).toBeUndefined();
     });
@@ -75,9 +75,10 @@ describe('Usage Examples', function () {
       collection.child = 'c';
       expect(conf.get('parent.child')).toBe('a');
     });
-    xit('should freeze object contents when looking up key - to avoid craziness', function () {
+    it('should freeze object contents when looking up key - to avoid craziness', function () {
       conf.set('parent', collection);
-      collection.child = 'c';
+      var output = conf.get('parent');
+      output.child = 'c';
       expect(conf.get('parent.child')).toBe('a');
     });
     xit('should freeze object contents when looking up parent - to avoid craziness', function () {
