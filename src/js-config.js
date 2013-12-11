@@ -3,15 +3,29 @@ var jsConfig = {new: function () {
   return {
 
     set: function (key, value){
+      var clone = function(obj) {
+        if (typeof(obj) === 'string') {
+          return obj;
+        }
+        else {
+          var newObj = {};
+          for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+              newObj[prop] = obj[prop];
+            }
+          }
+        }
+        return newObj;
+      };
       var keys = key.split('.');
       if (keys[1] === undefined) {
-        data[key]=value;
+        data[key]=clone(value);
       }
       else {
         if (data[keys[0]] === undefined) {
           data[keys[0]] = {};
         }
-        data[keys[0]][keys[1]] = value;
+        data[keys[0]][keys[1]] = clone(value);
       }
     },
     setDefault: function (key, value) {

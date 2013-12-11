@@ -62,12 +62,15 @@ describe('Usage Examples', function () {
       conf.set('parent.sibling', 'b');
       expect(conf.get('parent')).toEqual(collection);
     });
-    xit('should retrieve individual children after setting a parent object', function () {
-      conf.set('parent', collection);
+    it('should retrieve individual children after setting a parent object', function () {
+      conf.set('parent', {
+        child: 'a',
+        sibling: 'b'
+      });
       expect(conf.get('parent.child')).toBe('a');
       expect(conf.get('parent.sibling')).toBe('b');
     });
-    xit('should freeze object contents - to avoid crazyness', function () {
+    it('should freeze object contents - to avoid crazyness', function () {
       conf.set('parent', collection);
       collection.child = 'c';
       expect(conf.get('parent.child')).toBe('a');
