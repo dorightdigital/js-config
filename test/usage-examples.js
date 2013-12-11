@@ -9,7 +9,7 @@ describe('Usage Examples', function () {
       conf.set('a', 'b');
       expect(conf.get('a')).toBe('b');
     });
-    xit('should store and retrieve simple properties', function () {
+    it('should store and retrieve simple properties', function () {
       conf.set('a', 'b');
       conf.set('c', 'd');
       expect(conf.get('c')).toBe('d');
@@ -19,12 +19,15 @@ describe('Usage Examples', function () {
       conf.set('a.b', 'c');
       expect(conf.get('a.b')).toBe('c');
     });
-    xit('should gracefully deal with unknown properties', function () {
+    it('should gracefully deal with unknown properties', function () {
       expect(conf.get('unknown')).toBeUndefined();
     });
     xit('should gracefully deal with unknown hierarchical properties', function () {
       conf.set('known', 'a')
       expect(conf.get('unknown.doesnt.exist')).toBeUndefined();
+    });
+    it('should not blow up when asking for a child of an undefined parent', function () {
+      expect(conf.get('a.b')).toBeUndefined();
     });
     it('should not leak data between instances', function () {
       conf.set('a.b', 'c');
@@ -34,12 +37,12 @@ describe('Usage Examples', function () {
       conf.setDefault('a', 'b');
       expect(conf.get('a')).toBe('b');
     });
-    xit('should override the default', function () {
+    it('should override the default', function () {
       conf.setDefault('a', 'b');
       conf.set('a', 'c');
       expect(conf.get('a')).toBe('c');
     });
-    xit('should override the default regardless of the order', function () {
+    it('should override the default regardless of the order', function () {
       conf.set('a', 'c');
       conf.setDefault('a', 'b');
       expect(conf.get('a')).toBe('c');
@@ -54,7 +57,7 @@ describe('Usage Examples', function () {
         sibling: 'b'
       };
     })
-    xit('should retrieve all children when getting a parent', function () {
+    it('should retrieve all children when getting a parent', function () {
       conf.set('parent.child', 'a');
       conf.set('parent.sibling', 'b');
       expect(conf.get('parent')).toEqual(collection);

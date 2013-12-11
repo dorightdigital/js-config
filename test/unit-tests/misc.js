@@ -4,3 +4,4 @@ describe('avoiding stupidity', function () {
     expect(window.tmp).toBeUndefined();
   })
 })
+
