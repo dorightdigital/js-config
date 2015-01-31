@@ -1,5 +1,11 @@
 describe('Usage Examples', function () {
-  var conf;
+  "use strict";
+  function loadJsConfigInBrowserOrNode() {
+    return (typeof require === 'function' && require('../src/JsConfig')) || window.jsConfig;
+  }
+
+  var conf,
+    jsConfig = loadJsConfigInBrowserOrNode();
   beforeEach(function () {
     conf = jsConfig.new();
   });
@@ -23,7 +29,7 @@ describe('Usage Examples', function () {
       expect(conf.get('unknown')).toBeUndefined();
     });
     it('should gracefully deal with unknown hierarchical properties', function () {
-      conf.set('known', 'a')
+      conf.set('known', 'a');
       expect(conf.get('unknown.doesnt.exist')).toBeUndefined();
     });
     it('should not blow up when asking for a child of an undefined parent', function () {
@@ -56,7 +62,7 @@ describe('Usage Examples', function () {
         child: 'a',
         sibling: 'b'
       };
-    })
+    });
     it('should retrieve all children when getting a parent', function () {
       conf.set('parent.child', 'a');
       conf.set('parent.sibling', 'b');
@@ -109,12 +115,12 @@ describe('Usage Examples', function () {
       expect(conf.get('parent.child')).toBe('a');
     });
     xit('should prioritise existing properties over new defaults', function () {
-      conf = jsConfig.new({a:'b'});
+      conf = jsConfig.new({a: 'b'});
       conf.setDefault('a', 'c');
       expect(conf.get('a', 'b'));
     });
     xit('should prioritise existing properties over new defaults', function () {
-      conf = jsConfig.new({a:'b'});
+      conf = jsConfig.new({a: 'b'});
       conf.set('a', 'c');
       expect(conf.get('a', 'c'));
     });
@@ -133,13 +139,13 @@ describe('Usage Examples', function () {
     });
     xit('should overwrite collection with property', function () {
       conf.set('a', 'b');
-      conf.set('a', {c:'d'});
-      expect(conf.get('a')).toEqual({c:'d'});
+      conf.set('a', {c: 'd'});
+      expect(conf.get('a')).toEqual({c: 'd'});
     });
     xit('should overwrite collection with collection', function () {
-      conf.set('a', {b:'c'});
-      conf.set('a', {d:'e'});
-      expect(conf.get('a')).toEqual({d:'e'});
+      conf.set('a', {b: 'c'});
+      conf.set('a', {d: 'e'});
+      expect(conf.get('a')).toEqual({d: 'e'});
     });
   });
 
@@ -150,7 +156,7 @@ describe('Usage Examples', function () {
       expect(conf.get('a')).toBeUndefined();
     });
     xit('should remove collection', function () {
-      conf.set('a', {b:'c'});
+      conf.set('a', {b: 'c'});
       conf.remove('a');
       expect(conf.get('a')).toBeUndefined();
     });
