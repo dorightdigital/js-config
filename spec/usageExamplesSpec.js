@@ -1,13 +1,13 @@
 describe('Usage Examples', function () {
   "use strict";
   function loadJsConfigInBrowserOrNode() {
-    return (typeof require === 'function' && require('../src/JsConfig')) || window.jsConfig;
+    return (typeof require === 'function' && require('../src/JsConfig')) || window.JsConfig;
   }
 
   var conf,
-    jsConfig = loadJsConfigInBrowserOrNode();
+    JsConfig = loadJsConfigInBrowserOrNode();
   beforeEach(function () {
-    conf = jsConfig.new();
+    conf = new JsConfig();
   });
 
   describe('Basic Usage', function () {
@@ -37,7 +37,7 @@ describe('Usage Examples', function () {
     });
     it('should not leak data between instances', function () {
       conf.set('a.b', 'c');
-      expect(jsConfig.new().get('a.b')).toBeUndefined();
+      expect(new JsConfig().get('a.b')).toBeUndefined();
     });
     it('should support setting the default', function () {
       conf.setDefault('a', 'b');
@@ -71,31 +71,31 @@ describe('Usage Examples', function () {
       process.env = {port: '8080'};
     });
     it('should carry through all required params', function () {
-      var actual = jsConfig.readFromObject(process.env, ['port']);
+      var actual = JsConfig.readFromObject(process.env, ['port']);
       expect(actual.get('port')).toBe('8080');
     });
     it('strip out unmentioned params', function () {
-      var actual = jsConfig.readFromObject(process.env, []);
+      var actual = JsConfig.readFromObject(process.env, []);
       expect(actual.get('port')).toBeUndefined();
     });
     it('should blow up if required item is missing', function () {
       expect(function () {
-        jsConfig.readFromObject(process.env, ['secret']);
+        JsConfig.readFromObject(process.env, ['secret']);
       }).toThrow(new Error('Missing required configuration parameter [secret].'));
     });
     it('should show all missing required items', function () {
       expect(function () {
-        jsConfig.readFromObject(process.env, ['apiHost', 'apiKey']);
+        JsConfig.readFromObject(process.env, ['apiHost', 'apiKey']);
       }).toThrow(new Error('Missing required configuration parameter [apiHost,apiKey].'));
     });
     it('should accept default values', function () {
-      var actual = jsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com'});
+      var actual = JsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com'});
       expect(actual.get('apiHost')).toBe('example.com');
       expect(actual.get('port')).toBe('8080');
     });
     it('should override default values', function () {
       process.env.apiHost = 'api.dorightdigital.com';
-      var actual = jsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com', maxTimeout: 2});
+      var actual = JsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com', maxTimeout: 2});
       expect(actual.get('apiHost')).toBe('api.dorightdigital.com');
       expect(actual.get('port')).toBe('8080');
     });
@@ -212,5 +212,10 @@ describe('Usage Examples', function () {
       conf.remove('a');
       expect(conf.get('a')).toBe('b');
     });
+  });
+  it('should throw if missing new command', function () {
+    expect(function () {
+      JsConfig();
+    }).toThrow(new Error('JsConfig is an object not a function, you must use `new JsConfig();`'));
   });
 });

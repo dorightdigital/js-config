@@ -2,7 +2,7 @@
   "name": "js-config",
   "version": "1.0.0",
   "description": "A helper for config management in JS - for any browser, node.js and io.js",
-  "main": "src/js-config.js",
+  "main": "src/JsConfig.js",
   "directories": {
     "test": "test"
   },

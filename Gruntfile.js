@@ -7,7 +7,7 @@ module.exports = function (grunt) {
         src: 'spec/**/*.js',
         directives: {
           indent: 2,
-          notypeof: true,
+          newcap: true,
           predef: [
             'describe',
             'it',
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
       }
     },
     watch: {
-      files: ['spec/*.js', 'src/*.js'],
+      files: ['spec/**/*.js', 'src/JsConfig.js'],
       tasks: ['test']
     },
     jasmine_node: {
