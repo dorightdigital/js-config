@@ -2,3 +2,7 @@
 .DS_STORE
 .swp
 
+.grunt/
+_SpecRunner.html
+build
+node_modules
