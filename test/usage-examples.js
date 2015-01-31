@@ -106,7 +106,7 @@ describe('Usage Examples', function () {
           child: 'a'
         }
       });
-      expect(conf.get('parent.child', 'a'));
+      expect(conf.get('parent.child')).toBe('a');
     });
     xit('should prioritise existing properties over new defaults', function () {
       conf = jsConfig.new({a:'b'});

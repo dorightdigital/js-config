@@ -3,5 +3,4 @@ describe('avoiding stupidity', function () {
     jsConfig.new().set('a', 'b');
     expect(window.tmp).toBeUndefined();
   })
-})
-
+});
