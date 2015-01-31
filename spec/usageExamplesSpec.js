@@ -55,6 +55,44 @@ describe('Usage Examples', function () {
     });
   });
 
+  describe('Node Env Vars examples', function () {
+    var process = {};
+    beforeEach(function () {
+      process.env = {port: '8080'};
+    });
+    it('should carry through all required params', function () {
+      var actual = jsConfig.readFromObject(process.env, ['port']);
+      expect(actual.port).toBe('8080');
+    });
+    it('strip out unmentioned params', function () {
+      var actual = jsConfig.readFromObject(process.env, []);
+      expect(actual.port).toBeUndefined();
+    });
+    it('should blow up if required item is missing', function () {
+      expect(function () {
+        jsConfig.readFromObject(process.env, ['secret']);
+      }).toThrow(new Error('Missing required configuration parameter [secret].'));
+    });
+    it('should show all missing required items', function () {
+      expect(function () {
+        jsConfig.readFromObject(process.env, ['apiHost', 'apiKey']);
+      }).toThrow(new Error('Missing required configuration parameter [apiHost,apiKey].'));
+    });
+    it('should accept default values', function () {
+      var actual = jsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com'});
+      expect(actual.apiHost).toBe('example.com');
+      expect(actual.port).toBe('8080');
+    });
+    it('should override default values', function () {
+      process.env.apiHost = 'api.dorightdigital.com';
+      process.env.maxTimeout = 0;
+      var actual = jsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com', maxTimeout: 2});
+      expect(actual.apiHost).toBe('api.dorightdigital.com');
+      expect(actual.port).toBe('8080');
+      expect(actual.maxTimeout).toBe(0);
+    });
+  });
+
   describe('Hierarchy', function () {
     var collection;
     beforeEach(function () {
