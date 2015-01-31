@@ -53,6 +53,16 @@ describe('Usage Examples', function () {
       conf.setDefault('a', 'b');
       expect(conf.get('a')).toBe('c');
     });
+    it('should override booleans regardless of JS truthyness and falsyness', function () {
+      conf.set('a', false);
+      conf.setDefault('a', true);
+      expect(conf.get('a')).toBe(false);
+    });
+    it('should override numbers regardless of JS truthyness and falsyness', function () {
+      conf.set('b', 0);
+      conf.setDefault('b', 1);
+      expect(conf.get('b')).toBe(0);
+    });
   });
 
   describe('Node Env Vars examples', function () {
@@ -62,11 +72,11 @@ describe('Usage Examples', function () {
     });
     it('should carry through all required params', function () {
       var actual = jsConfig.readFromObject(process.env, ['port']);
-      expect(actual.port).toBe('8080');
+      expect(actual.get('port')).toBe('8080');
     });
     it('strip out unmentioned params', function () {
       var actual = jsConfig.readFromObject(process.env, []);
-      expect(actual.port).toBeUndefined();
+      expect(actual.get('port')).toBeUndefined();
     });
     it('should blow up if required item is missing', function () {
       expect(function () {
@@ -80,16 +90,14 @@ describe('Usage Examples', function () {
     });
     it('should accept default values', function () {
       var actual = jsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com'});
-      expect(actual.apiHost).toBe('example.com');
-      expect(actual.port).toBe('8080');
+      expect(actual.get('apiHost')).toBe('example.com');
+      expect(actual.get('port')).toBe('8080');
     });
     it('should override default values', function () {
       process.env.apiHost = 'api.dorightdigital.com';
-      process.env.maxTimeout = 0;
       var actual = jsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com', maxTimeout: 2});
-      expect(actual.apiHost).toBe('api.dorightdigital.com');
-      expect(actual.port).toBe('8080');
-      expect(actual.maxTimeout).toBe(0);
+      expect(actual.get('apiHost')).toBe('api.dorightdigital.com');
+      expect(actual.get('port')).toBe('8080');
     });
   });
 

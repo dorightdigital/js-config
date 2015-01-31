@@ -9,12 +9,12 @@ var jsConfig = (function () {
     }
   }
 
-  return {
+  var self = {
     new: function () {
       var data = {},
         clone = function (original) {
           var newObj = {};
-          if (typeof original === 'string' || original === undefined) {
+          if (typeof original !== 'object' || original === undefined) {
             return original;
           }
           loop(original, function (val, key) {
@@ -54,16 +54,19 @@ var jsConfig = (function () {
       };
     },
     readFromObject: function (obj, required, defaults) {
-      var missingKeys = [], output = {};
+      var missingKeys = [], output = self.new();
+      loop(defaults, function (value, key) {
+        output.setDefault(key, value);
+        if (obj.hasOwnProperty(key)) {
+          output.set(key, obj[key]);
+        }
+      });
       loop(required, function (name) {
         if (!obj.hasOwnProperty(name)) {
           missingKeys.push(name);
         } else {
-          output[name] = obj[name];
+          output.set(name, obj[name]);
         }
-      });
-      loop(defaults, function (value, key) {
-        output[key] = obj.hasOwnProperty(key) ? obj[key] : value;
       });
       if (missingKeys.length > 0) {
         throw new Error('Missing required configuration parameter [' + missingKeys.join(',') + '].');
@@ -71,6 +74,7 @@ var jsConfig = (function () {
       return output;
     }
   };
+  return self;
 }());
 
 if (typeof module === 'object') {
