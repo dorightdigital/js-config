@@ -1,7 +1,7 @@
 JS Config
 ====
 
-An open source project to standardise JS configuration. 
+An open source project to standardise JS configuration.  It's designed for use in any browser, node.js or io.js.
 
 Usage Examples
 ---
