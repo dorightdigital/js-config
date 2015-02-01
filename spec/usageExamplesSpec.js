@@ -122,6 +122,20 @@ describe('Usage Examples', function () {
       expect(conf.get('parent.child')).toBe('a');
       expect(conf.get('parent.sibling')).toBe('b');
     });
+    it('should allow shorthand for adding single value to object as default', function () {
+      conf.set('parent', {
+        child: 'a'
+      });
+      conf.setDefault('parent.sibling', 'b');
+      expect(conf.get('parent.child')).toBe('a');
+      expect(conf.get('parent.sibling')).toBe('b');
+    });
+    it('should allow shorthand for adding multiple values to object as default', function () {
+      conf.set('parent.child', 'a');
+      conf.setDefault('parent', {sibling: 'b', child: 'c'});
+      expect(conf.get('parent.child')).toBe('a');
+      expect(conf.get('parent.sibling')).toBe('b');
+    });
     it('should freeze object contents - to avoid crazyness', function () {
       conf.set('parent', collection);
       collection.child = 'c';
@@ -133,7 +147,7 @@ describe('Usage Examples', function () {
       output.child = 'c';
       expect(conf.get('parent.child')).toBe('a');
     });
-    xit('should freeze object contents when looking up parent - to avoid craziness', function () {
+    it('should freeze object contents when looking up parent - to avoid craziness', function () {
       conf.set('parent', collection);
       collection.child = 'c';
       expect(conf.get('parent')).toEqual({
@@ -141,7 +155,7 @@ describe('Usage Examples', function () {
         sibling: 'b'
       });
     });
-    xit('should protect against changes after looking up objects', function () {
+    it('should protect against changes after looking up objects', function () {
       conf.set('parent', collection);
       conf.get('parent').a = 'c';
       expect(conf.get('parent')).toEqual({
@@ -152,43 +166,43 @@ describe('Usage Examples', function () {
   });
 
   describe('Initial State', function () {
-    xit('should accept initial state on initialisation', function () {
-      conf = jsConfig.new({
+    it('should accept initial state on initialisation', function () {
+      conf = new JsConfig({
         parent: {
           child: 'a'
         }
       });
       expect(conf.get('parent.child')).toBe('a');
     });
-    xit('should prioritise existing properties over new defaults', function () {
-      conf = jsConfig.new({a: 'b'});
+    it('should prioritise initial values over new defaults', function () {
+      conf = new JsConfig({a: 'b'});
       conf.setDefault('a', 'c');
       expect(conf.get('a', 'b'));
     });
-    xit('should prioritise existing properties over new defaults', function () {
-      conf = jsConfig.new({a: 'b'});
+    it('should prioritise specifically set properties over initial values', function () {
+      conf = new JsConfig({a: 'b'});
       conf.set('a', 'c');
       expect(conf.get('a', 'c'));
     });
   });
 
   describe('Conflict Resolution', function () {
-    xit('should overwrite individual properties', function () {
+    it('should overwrite individual properties', function () {
       conf.set('a', 'b');
       conf.set('a', 'c');
       expect(conf.get('a')).toBe('c');
     });
-    xit('should overwrite collection with property', function () {
+    it('should overwrite collection with property', function () {
       conf.set('a', {'b': 'c'});
       conf.set('a', 'd');
       expect(conf.get('a')).toBe('d');
     });
-    xit('should overwrite collection with property', function () {
+    it('should overwrite collection with property', function () {
       conf.set('a', 'b');
       conf.set('a', {c: 'd'});
       expect(conf.get('a')).toEqual({c: 'd'});
     });
-    xit('should overwrite collection with collection', function () {
+    it('should overwrite collection with collection', function () {
       conf.set('a', {b: 'c'});
       conf.set('a', {d: 'e'});
       expect(conf.get('a')).toEqual({d: 'e'});
@@ -196,17 +210,17 @@ describe('Usage Examples', function () {
   });
 
   describe('Removing properties', function () {
-    xit('should remove property', function () {
+    it('should remove property', function () {
       conf.set('a', 'b');
       conf.remove('a');
       expect(conf.get('a')).toBeUndefined();
     });
-    xit('should remove collection', function () {
+    it('should remove collection', function () {
       conf.set('a', {b: 'c'});
       conf.remove('a');
       expect(conf.get('a')).toBeUndefined();
     });
-    xit('should fallback to default value when removed', function () {
+    it('should fallback to default value when removed', function () {
       conf.setDefault('a', 'b');
       conf.set('a', 'c');
       conf.remove('a');

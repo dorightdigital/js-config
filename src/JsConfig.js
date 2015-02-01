@@ -1,57 +1,81 @@
 var JsConfig = (function () {
   "use strict";
   function loop(arr, callback) {
-    var key;
+    var key, returnVal;
     for (key in arr) {
       if (arr.hasOwnProperty(key)) {
-        callback(arr[key], key);
+        returnVal = callback(arr[key], key);
+        if (returnVal === false) {
+          return;
+        }
       }
     }
   }
 
-  function JsConfig() {
+  function clone(original) {
+    var newObj = {};
+    if (typeof original !== 'object' || original === undefined) {
+      return original;
+    }
+    loop(original, function (val, key) {
+      newObj[key] = val;
+    });
+    return newObj;
+  }
+
+  function eachPart(pathAsString, object, callback) {
+    var currentObj = object, arr = pathAsString.split('.');
+    loop(arr, function (name, pos) {
+      var returnValue = callback(currentObj, name, arr.length - pos - 1 === 0);
+      currentObj = currentObj[name];
+      return returnValue;
+    });
+  }
+
+  function JsConfig(initialConfig) {
     if (!this || this.constructor !== JsConfig) {
       throw new Error('JsConfig is an object not a function, you must use `new JsConfig();`');
     }
-    var data = {},
-      clone = function (original) {
-        var newObj = {};
-        if (typeof original !== 'object' || original === undefined) {
-          return original;
+    var defaults = {}, data = initialConfig === undefined ? {} : clone(initialConfig);
+
+    function addToValueObject(key, value, object) {
+      eachPart(key, object, function (parent, name, isEnd) {
+        parent[name] = isEnd ? clone(value) : (parent[name] || {});
+      });
+    }
+
+    function lookupKeyInData(key, obj) {
+      var answer;
+      eachPart(key, obj, function (parent, name, isEnd) {
+        if (isEnd) {
+          answer = parent[name];
+        } else if (parent[name] === undefined) {
+          return false;
         }
-        loop(original, function (val, key) {
-          newObj[key] = val;
-        });
-        return newObj;
-      };
+      });
+      return answer;
+    }
 
     this.set = function (key, value) {
-      var keys = key.split('.');
-      if (keys[1] === undefined) {
-        data[key] = clone(value);
-      } else {
-        if (data[keys[0]] === undefined) {
-          data[keys[0]] = {};
-        }
-        data[keys[0]][keys[1]] = clone(value);
-      }
+      addToValueObject(key, value, data);
     };
 
     this.setDefault = function (key, value) {
-      if (data[key] === undefined) {
-        this.set(key, value);
-      }
+      addToValueObject(key, value, defaults);
     };
 
     this.get = function (key) {
-      var keys = key.split('.');
-      if (keys[1] === undefined) {
-        return clone(data[key]);
+      var answer = lookupKeyInData(key, data);
+      if (answer === undefined) {
+        answer = lookupKeyInData(key, defaults);
       }
-      if (data[keys[0]] === undefined) {
-        return undefined;
+      return clone(answer);
+    };
+
+    this.remove = function (key) {
+      if (data.hasOwnProperty(key)) {
+        delete data[key];
       }
-      return clone(data[keys[0]][keys[1]]);
     };
   }
 
