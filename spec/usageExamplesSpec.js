@@ -10,6 +10,32 @@ describe('Usage Examples', function () {
     conf = new JsConfig();
   });
 
+  describe('Example For README', function () {
+    it('should give a complete example', function () {
+      var myConfig = new JsConfig({
+        someKey: 'someValue',
+        collection: {
+          item: 'a'
+        }
+      });
+
+      myConfig.setDefault('collection', {
+        item: 'b',
+        another: 'c',
+        overridden: 'd'
+      });
+
+      myConfig.set('collection.overridden', 'e');
+
+      expect(myConfig.get('someKey')).toBe('someValue');
+      expect(myConfig.get('collection.item')).toBe('a');
+      expect(myConfig.get('collection.another')).toBe('c');
+      expect(myConfig.get('collection.overridden')).toBe('e');
+      expect(myConfig.get('collection.nothing')).toBe(undefined);
+      expect(myConfig.get('collection.nothing.this.would.usually.cause.problems')).toBe(undefined);
+    });
+  });
+
   describe('Basic Usage', function () {
     it('should store and retrieve simple properties', function () {
       conf.set('a', 'b');

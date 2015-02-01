@@ -3,19 +3,43 @@ JS Config
 
 An open source project to standardise JS configuration. 
 
-Development Notes - how to contribute
+Usage Examples
 ---
 
-Have a look [test/usageExamplesSpec.js](test/usageExamplesSpec.js), see if there are any tests which
-are marked 'xit' this means that it's a desired feature which hasn't been worked on yet.  You can then
-remove the 'x' to make 'it' and you'll (hopefully) see the test fail, you can then fix that test
-and send a pull request.  You'll probably want to write more granular tests alongside it, feel free to do that
-but create or re-use a test inside [test/unit-tests](test/unit-tests) (and add
-it to [SpecRunner](test/jasmine/SpecRunner.html) of course).
+Config should be pretty simple, hopefully simplicity is what you'll find when using JS Config!  The basic examples are:
 
-If you think there's a missing feature create some failing tests, then mark them as 'xit' and send a pull request.
+```javascript
+var myConfig = new JsConfig({
+  someKey: 'someValue',
+  collection: {
+    item: 'a'
+  }
+});
 
-Note
+myConfig.setDefault('collection', {
+  item: 'b',
+  another: 'c',
+  overridden: 'd'
+});
+
+myConfig.set('collection.overridden', 'e');
+
+expect(myConfig.get('someKey')).toBe('someValue');
+expect(myConfig.get('collection.item')).toBe('a');
+expect(myConfig.get('collection.another')).toBe('c');
+expect(myConfig.get('collection.overridden')).toBe('e');
+expect(myConfig.get('collection.nothing')).toBe(undefined);
+expect(myConfig.get('collection.nothing.this.would.usually.cause.problems')).toBe(undefined);
+
+```
+
+There are a load more usage examples at [test/usageExamplesSpec.js](test/usageExamplesSpec.js)
+
+Contributions
 ---
 
-At this stage dev branch is being used to teach javascript principles, if you think the entire design could be improved feel free to raise a pull request... as long as it passes the same tests.
+Contributions are welcome, this project is maintained by [Do Right Digital](http://dorightdigital.com/)
+ and it's designed to be small enough and generic enough that it can be used on any JS project.
+ If you think there's a missing feature feel free to code it (with accompanying tests) or
+  if just create some failing tests, then mark them as 'xit' and send a pull request.
+
