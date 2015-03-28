@@ -72,6 +72,23 @@ var JsConfig = (function () {
       return clone(answer);
     };
 
+    this.getAll = function () {
+      var output = clone(defaults);
+
+      function updateWithOverrides(data, output) {
+        loop(data, function (value, key) {
+          if (typeof value !== 'object') {
+            output[key] = value;
+          } else {
+            output[key] = output[key] || {};
+            updateWithOverrides(data[key], output[key]);
+          }
+        });
+      }
+      updateWithOverrides(data, output);
+      return output;
+    };
+
     this.remove = function (key) {
       if (data.hasOwnProperty(key)) {
         delete data[key];
@@ -79,19 +96,12 @@ var JsConfig = (function () {
     };
   }
 
-  JsConfig.readFromObject = function (obj, required, defaults) {
+  JsConfig.readFromObject = function (obj, items) {
     var missingKeys = [], output = new JsConfig();
-    loop(defaults, function (value, key) {
+    loop(items || {}, function (value, key) {
       output.setDefault(key, value);
       if (obj.hasOwnProperty(key)) {
         output.set(key, obj[key]);
-      }
-    });
-    loop(required, function (name) {
-      if (!obj.hasOwnProperty(name)) {
-        missingKeys.push(name);
-      } else {
-        output.set(name, obj[name]);
       }
     });
     if (missingKeys.length > 0) {

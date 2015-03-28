@@ -94,36 +94,72 @@ describe('Usage Examples', function () {
   describe('Node Env Vars examples', function () {
     var process = {};
     beforeEach(function () {
-      process.env = {port: '8080'};
+      process.env = {PORT: '8080'};
     });
-    it('should carry through all required params', function () {
-      var actual = JsConfig.readFromObject(process.env, ['port']);
-      expect(actual.get('port')).toBe('8080');
-    });
-    it('strip out unmentioned params', function () {
-      var actual = JsConfig.readFromObject(process.env, []);
-      expect(actual.get('port')).toBeUndefined();
-    });
-    it('should blow up if required item is missing', function () {
-      expect(function () {
-        JsConfig.readFromObject(process.env, ['secret']);
-      }).toThrow(new Error('Missing required configuration parameter [secret].'));
-    });
-    it('should show all missing required items', function () {
-      expect(function () {
-        JsConfig.readFromObject(process.env, ['apiHost', 'apiKey']);
-      }).toThrow(new Error('Missing required configuration parameter [apiHost,apiKey].'));
-    });
-    it('should accept default values', function () {
-      var actual = JsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com'});
-      expect(actual.get('apiHost')).toBe('example.com');
-      expect(actual.get('port')).toBe('8080');
-    });
-    it('should override default values', function () {
-      process.env.apiHost = 'api.dorightdigital.com';
-      var actual = JsConfig.readFromObject(process.env, ['port'], {apiHost: 'example.com', maxTimeout: 2});
-      expect(actual.get('apiHost')).toBe('api.dorightdigital.com');
-      expect(actual.get('port')).toBe('8080');
+
+    describe('Env var helper', function () {
+      it('should remap string values', function () {
+        process.env.SOME_PREFIX__MY_VAR = 'value A';
+        process.env.SOME_PREFIX__ANOTHER_VAR = 'value B';
+        var actual = JsConfig.readFromObject(process.env, {
+          myVar: 'SOME_PREFIX__MY_VAR',
+          someRandomThing: 'SOME_PREFIX__ANOTHER_VAR'
+        });
+        expect(actual.getAll()).toEqual({
+          myVar: 'value A',
+          someRandomThing: 'value B'
+        });
+      });
+      it('should remap string values into hierarchy', function () {
+        process.env.SOME_PREFIX__MY_VAR = 'value A';
+        process.env.SOME_PREFIX__ANOTHER_VAR = 'value B';
+        var actual = JsConfig.readFromObject(process.env, {
+          something: {
+            myVar: 'SOME_PREFIX__MY_VAR',
+          },
+          somethingElse: {
+            someRandomThing: 'SOME_PREFIX__ANOTHER_VAR'
+          }
+        });
+        expect(actual.get('something.myVar')).toEqual('value A');
+        expect(actual.get('somethingElse.someRandomThing')).toEqual('value B');
+      });
+      it('should allow defaults for nonexistnet keys', function () {
+        process.env.EXISTS = 'true';
+        var actual = JsConfig.readFromObject(process.env, {
+          port: 'PORT',
+          specific: 'NON_EXISTANT_ENV_VAR',
+          another: 'EXISTS'
+        });
+        actual.setDefault('specific', 'fallback');
+        actual.setDefault('another', 'fallback');
+        expect(actual.getAll()).toEqual({
+          port: 8080,
+          specific: 'fallback',
+          another: 'true'
+        });
+      });
+      it('should assert against nonextent keys', function () {
+        var actual = JsConfig.readFromObject(process.env, {
+          port: 'PORT',
+          specific: 'NON_EXISTANT_ENV_VAR'
+        });
+        expect(function () {
+          actual.assertExists('specific');
+        }).toThrow();
+      });
+      it('should assert presence of keys', function () {
+        var actual = new JsConfig({facebook: {id: 123}});
+        expect(function (){
+          actual.assertExists('facebook.id');
+        }).not.toThrow()
+      });
+      it('should fail when asserting missing keys', function () {
+        var actual = new JsConfig({facebook: {}});
+        expect(function (){
+          actual.assertExists('facebook.id');
+        }).toThrow()
+      });
     });
   });
 
@@ -253,6 +289,32 @@ describe('Usage Examples', function () {
       expect(conf.get('a')).toBe('b');
     });
   });
+
+  describe('Config Summary', function () {
+    it('should give a summary', function () {
+      conf.set('a.b', 'c');
+      conf.setDefault('a.d', 'e');
+      conf.set('a.f', 'g');
+      conf.setDefault('something.interesting', 'h');
+      conf.set('someother.interesting.thing', 'i');
+      expect(conf.getAll()).toEqual({
+        a: {
+          b: 'c',
+          d: 'e',
+          f: 'g'
+        },
+        something: {
+          interesting: 'h'
+        },
+        someother: {
+          interesting: {
+            thing: 'i'
+          }
+        }
+      });
+    });
+  });
+
   it('should throw if missing new command', function () {
     expect(function () {
       JsConfig();
