@@ -1,0 +1,27 @@
+{
+  "name": "js-config",
+  "version": "1.0.1",
+  "homepage": "https://github.com/dorightdigital/js-config",
+  "authors": [
+    "Mat Carey <opensource@dorightdigital.com>"
+  ],
+  "description": "A helper for config management in JS - for any browser, node.js and io.js",
+  "main": "src/JsConfig.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "Config",
+    "Browser",
+    "Node",
+    "Configuration"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "specs"
+  ]
+}

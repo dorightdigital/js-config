@@ -42,21 +42,10 @@ module.exports = function (grunt) {
       files: ['spec/**/*.js', 'src/JsConfig.js'],
       tasks: ['test']
     },
-    jasmine_node: {
+    jasmine_nodejs: {
       options: {
-        forceExit: true,
-        match: '.',
-        matchall: false,
-        extensions: 'js',
-        specNameMatcher: 'Spec',
-        jUnit: {
-          report: true,
-          savePath: "./build/reports/jasmine/",
-          useDotNotation: true,
-          consolidate: true
-        }
-      },
-      all: ['spec/']
+        specNameSuffex: 'Spec.js'
+      }
     },
     jasmine: {
       all: {
@@ -72,9 +61,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-jslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.loadNpmTasks('grunt-jasmine-node');
+  grunt.loadNpmTasks('grunt-jasmine-nodejs');
 
-  grunt.registerTask('test', ['jasmine_node', 'jslint', 'jasmine']);
+  grunt.registerTask('test', ['jasmine_nodejs', 'jslint', 'jasmine']);
   grunt.registerTask('default', ['test', 'watch']);
 
 };
