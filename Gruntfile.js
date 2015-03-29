@@ -45,6 +45,9 @@ module.exports = function (grunt) {
     jasmine_nodejs: {
       options: {
         specNameSuffex: 'Spec.js'
+      },
+      all: {
+        specs: 'spec/**'
       }
     },
     jasmine: {
