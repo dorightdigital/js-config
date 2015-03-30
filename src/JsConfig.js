@@ -115,29 +115,30 @@ var JsConfig = (function () {
         delete data[key];
       }
     };
+
+    this.readFromObject = function (obj, items) {
+      var self = this;
+      function deepLoop(parent, combinedName) {
+        loop(parent, function (value, key) {
+          var name = combinedName ? combinedName + '.' : '';
+          name += key;
+          if (typeof value === 'object') {
+            deepLoop(value, name);
+          } else {
+            if (obj.hasOwnProperty(value)) {
+              self.set(name, obj[value]);
+            }
+          }
+        });
+      }
+
+      deepLoop(items || {});
+    };
   }
 
-  JsConfig.readFromObject = function (obj, items) {
-    var missingKeys = [], output = new JsConfig();
-
-    function deepLoop(parent, combinedName) {
-      loop(parent, function (value, key) {
-        var name = combinedName ? combinedName + '.' : '';
-        name += key;
-        if (typeof value === 'object') {
-          deepLoop(value, name);
-        } else {
-          if (obj.hasOwnProperty(value)) {
-            output.set(name, obj[value]);
-          }
-        }
-      });
-    }
-
-    deepLoop(items || {});
-    if (missingKeys.length > 0) {
-      throw new Error('Missing required configuration parameter [' + missingKeys.join(',') + '].');
-    }
+  JsConfig.readFromObject = function () {
+    var output = new JsConfig();
+    output.readFromObject.apply(output, arguments);
     return output;
   };
 

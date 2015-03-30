@@ -110,6 +110,20 @@ describe('Usage Examples', function () {
           someRandomThing: 'value B'
         });
       });
+      it('should also be available on instantiated config objects', function () {
+        process.env.SOME_PREFIX__MY_VAR = 'value A';
+        process.env.SOME_PREFIX__ANOTHER_VAR = 'value B';
+        var actual = new JsConfig({firstValue: 'set in constructor'});
+        actual.readFromObject(process.env, {
+          myVar: 'SOME_PREFIX__MY_VAR',
+          someRandomThing: 'SOME_PREFIX__ANOTHER_VAR'
+        });
+        expect(actual.getAll()).toEqual({
+          firstValue: 'set in constructor',
+          myVar: 'value A',
+          someRandomThing: 'value B'
+        });
+      });
       it('should remap string values into hierarchy', function () {
         process.env.SOME_PREFIX__MY_VAR = 'value A';
         process.env.SOME_PREFIX__ANOTHER_VAR = 'value B';
