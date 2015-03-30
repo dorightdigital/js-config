@@ -1,3 +1,5 @@
+/*global console*/
+
 var JsConfig = (function () {
   "use strict";
   function loop(arr, callback) {
@@ -72,6 +74,24 @@ var JsConfig = (function () {
       return clone(answer);
     };
 
+    this.assertExists = function () {
+      var missingKeys = [], self = this, i, key;
+      for (i = 0; i < arguments.length; i += 1) {
+        key = arguments[i];
+        if (self.get(key) === undefined) {
+          missingKeys.push(key);
+        }
+      }
+      if (missingKeys.length > 0) {
+        throw new Error([
+          'JsConfig: missing key',
+          (missingKeys.length > 1 ? 's' : ''),
+          ': "',
+          missingKeys.join('", "'),
+          '"'].join(''));
+      }
+    };
+
     this.getAll = function () {
       var output = clone(defaults);
 
@@ -85,6 +105,7 @@ var JsConfig = (function () {
           }
         });
       }
+
       updateWithOverrides(data, output);
       return output;
     };
@@ -98,12 +119,22 @@ var JsConfig = (function () {
 
   JsConfig.readFromObject = function (obj, items) {
     var missingKeys = [], output = new JsConfig();
-    loop(items || {}, function (value, key) {
-      output.setDefault(key, value);
-      if (obj.hasOwnProperty(key)) {
-        output.set(key, obj[key]);
-      }
-    });
+
+    function deepLoop(parent, combinedName) {
+      loop(parent, function (value, key) {
+        var name = combinedName ? combinedName + '.' : '';
+        name += key;
+        if (typeof value === 'object') {
+          deepLoop(value, name);
+        } else {
+          if (obj.hasOwnProperty(value)) {
+            output.set(name, obj[value]);
+          }
+        }
+      });
+    }
+
+    deepLoop(items || {});
     if (missingKeys.length > 0) {
       throw new Error('Missing required configuration parameter [' + missingKeys.join(',') + '].');
     }

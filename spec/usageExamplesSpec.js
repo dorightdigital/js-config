@@ -115,7 +115,7 @@ describe('Usage Examples', function () {
         process.env.SOME_PREFIX__ANOTHER_VAR = 'value B';
         var actual = JsConfig.readFromObject(process.env, {
           something: {
-            myVar: 'SOME_PREFIX__MY_VAR',
+            myVar: 'SOME_PREFIX__MY_VAR'
           },
           somethingElse: {
             someRandomThing: 'SOME_PREFIX__ANOTHER_VAR'
@@ -134,7 +134,7 @@ describe('Usage Examples', function () {
         actual.setDefault('specific', 'fallback');
         actual.setDefault('another', 'fallback');
         expect(actual.getAll()).toEqual({
-          port: 8080,
+          port: '8080',
           specific: 'fallback',
           another: 'true'
         });
@@ -146,19 +146,31 @@ describe('Usage Examples', function () {
         });
         expect(function () {
           actual.assertExists('specific');
-        }).toThrow();
+        }).toThrow(new Error('JsConfig: missing key: "specific"'));
       });
       it('should assert presence of keys', function () {
         var actual = new JsConfig({facebook: {id: 123}});
-        expect(function (){
+        expect(function () {
           actual.assertExists('facebook.id');
-        }).not.toThrow()
+        }).not.toThrow();
       });
       it('should fail when asserting missing keys', function () {
         var actual = new JsConfig({facebook: {}});
-        expect(function (){
+        expect(function () {
           actual.assertExists('facebook.id');
-        }).toThrow()
+        }).toThrow(new Error('JsConfig: missing key: "facebook.id"'));
+      });
+      it('should assert multiple keys', function () {
+        var actual = new JsConfig({facebook: {id: 123}});
+        expect(function () {
+          actual.assertExists('facebook.id', 'abc');
+        }).toThrow(new Error('JsConfig: missing key: "abc"'));
+      });
+      it('should list multiple missing keys in error message', function () {
+        var actual = new JsConfig({facebook: {id: 123}});
+        expect(function () {
+          actual.assertExists('abc', 'facebook.id', 'def', 'ghi');
+        }).toThrow(new Error('JsConfig: missing keys: "abc", "def", "ghi"'));
       });
     });
   });
