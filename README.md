@@ -34,8 +34,31 @@ expect(myConfig.get('collection.nothing.this.would.usually.cause.problems')).toB
 
 To use this with Node.JS or IO.JS you can do things like:
 
-```javascript
+(using environment variables MY_OWN_PASSWORD=secret ONE_OPTIONAL_VALUE=abc)
 
+```javascript
+var myConfig = new JsConfig({
+  someKey: 'someValue',
+  optionalValueTwo: 'defghi',
+  collection: {
+    item: 'a',
+    thePassword: 'default password'
+  }
+});
+
+expect(myConfig.get('collection.thePassword')).toEqual('default password');
+
+myConfig.readFromObject(process.env, {
+  collection: {
+    thePassword: 'MY_OWN_PASSWORD'
+  },
+  optionalValueOne: 'ONE_OPTIONAL_VALUE',
+  optionalValueTwo: 'ANOTHER_OPTIONAL_VALUE'
+});
+
+expect(myConfig.get('collection.thePassword')).toEqual('secret');
+expect(myConfig.get('optionalValueOne')).toEqual('abc');
+expect(myConfig.get('optionalValueTwo')).toEqual('defghi');
 ```
 
 This will give you an object which includes the environment variable values for MUST_BE_PRESENT, AN_ENV_VAR and NO_DEFAULT but blows up if one of them doesn't exist.

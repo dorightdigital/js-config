@@ -34,6 +34,37 @@ describe('Usage Examples', function () {
       expect(myConfig.get('collection.nothing')).toBe(undefined);
       expect(myConfig.get('collection.nothing.this.would.usually.cause.problems')).toBe(undefined);
     });
+
+    it('should give a node/io example', function () {
+      var process = {
+          env: {
+            MY_OWN_PASSWORD: 'secret',
+            ONE_OPTIONAL_VALUE: 'abc'
+          }
+        },
+        myConfig = new JsConfig({
+          someKey: 'someValue',
+          optionalValueTwo: 'defghi',
+          collection: {
+            item: 'a',
+            thePassword: 'default password'
+          }
+        });
+
+      expect(myConfig.get('collection.thePassword')).toEqual('default password');
+
+      myConfig.readFromObject(process.env, {
+        collection: {
+          thePassword: 'MY_OWN_PASSWORD'
+        },
+        optionalValueOne: 'ONE_OPTIONAL_VALUE',
+        optionalValueTwo: 'ANOTHER_OPTIONAL_VALUE'
+      });
+
+      expect(myConfig.get('collection.thePassword')).toEqual('secret');
+      expect(myConfig.get('optionalValueOne')).toEqual('abc');
+      expect(myConfig.get('optionalValueTwo')).toEqual('defghi');
+    });
   });
 
   describe('Basic Usage', function () {
