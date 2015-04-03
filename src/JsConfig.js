@@ -14,9 +14,13 @@ var JsConfig = (function () {
     }
   }
 
+  function isObject(obj) {
+    return typeof obj === 'object' && obj.length === undefined;
+  }
+
   function clone(original) {
     var newObj = {};
-    if (typeof original !== 'object' || original === undefined) {
+    if (!isObject(original) || original === undefined) {
       return original;
     }
     loop(original, function (val, key) {
@@ -97,7 +101,7 @@ var JsConfig = (function () {
 
       function updateWithOverrides(data, output) {
         loop(data, function (value, key) {
-          if (typeof value !== 'object') {
+          if (!isObject(value)) {
             output[key] = value;
           } else {
             output[key] = output[key] || {};
@@ -117,22 +121,31 @@ var JsConfig = (function () {
     };
 
     this.readFromObject = function (obj, items) {
-      var self = this;
+      if (!isObject(obj)) {
+        throw new Error('Couldn\'t "readFromObject" as no object was provided');
+      }
+      if (!isObject(items)) {
+        throw new Error('Couldn\'t "readFromObject" as no item definition was provided');
+      }
+      var self = this, lookedUpValue;
       function deepLoop(parent, combinedName) {
         loop(parent, function (value, key) {
           var name = combinedName ? combinedName + '.' : '';
           name += key;
-          if (typeof value === 'object') {
+          if (isObject(value)) {
             deepLoop(value, name);
           } else {
-            if (obj.hasOwnProperty(value)) {
-              self.set(name, obj[value]);
+            lookedUpValue = lookupKeyInData(value, obj);
+            if (lookedUpValue) {
+              self.set(name, lookedUpValue);
             }
           }
         });
       }
 
-      deepLoop(items || {});
+      if (items) {
+        deepLoop(items);
+      }
     };
   }
 

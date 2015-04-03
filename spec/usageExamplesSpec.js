@@ -138,6 +138,15 @@ describe('Usage Examples', function () {
         expect(actual.get('something.myVar')).toEqual('value A');
         expect(actual.get('somethingElse.someRandomThing')).toEqual('value B');
       });
+      it('support nested values', function () {
+        var myObj = {parent: {child: {someVar: 'some value'}}},
+          actual = JsConfig.readFromObject(myObj, {
+            something: {
+              myVar: 'parent.child.someVar'
+            }
+          });
+        expect(actual.get('something.myVar')).toEqual('some value');
+      });
       it('should allow defaults for nonexistnet keys', function () {
         process.env.EXISTS = 'true';
         var actual = JsConfig.readFromObject(process.env, {
@@ -161,6 +170,30 @@ describe('Usage Examples', function () {
         expect(function () {
           actual.assertExists('specific');
         }).toThrow(new Error('JsConfig: missing key: "specific"'));
+      });
+      it('should complain when no object provided to read from', function () {
+        var jsConfig = new JsConfig();
+        expect(function () {
+          jsConfig.readFromObject();
+        }).toThrow(new Error('Couldn\'t "readFromObject" as no object was provided'));
+      });
+      it('should complain when non-object provided instead of object to read from', function () {
+        var jsConfig = new JsConfig();
+        expect(function () {
+          jsConfig.readFromObject('some string');
+        }).toThrow(new Error('Couldn\'t "readFromObject" as no object was provided'));
+      });
+      it('should complain when array provided instead of object to read from', function () {
+        var jsConfig = new JsConfig();
+        expect(function () {
+          jsConfig.readFromObject(['a', 'b']);
+        }).toThrow(new Error('Couldn\'t "readFromObject" as no object was provided'));
+      });
+      it('should complain when no mapper provided', function () {
+        var jsConfig = new JsConfig();
+        expect(function () {
+          jsConfig.readFromObject({}, ['a', 'b']);
+        }).toThrow(new Error('Couldn\'t "readFromObject" as no item definition was provided'));
       });
       it('should assert presence of keys', function () {
         var actual = new JsConfig({facebook: {id: 123}});

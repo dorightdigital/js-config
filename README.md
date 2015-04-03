@@ -35,10 +35,7 @@ expect(myConfig.get('collection.nothing.this.would.usually.cause.problems')).toB
 To use this with Node.JS or IO.JS you can do things like:
 
 ```javascript
-var myConfig = JsConfig.readFromObject(process.env, ['MUST_BE_PRESENT', 'AN_ENV_VAR', 'NO_DEFAULT'], {
-  ANOTHER_ENV_VAR: 'the default value',
-  AN_OPTIONAL_FLAG: 'false'
-});
+
 ```
 
 This will give you an object which includes the environment variable values for MUST_BE_PRESENT, AN_ENV_VAR and NO_DEFAULT but blows up if one of them doesn't exist.
