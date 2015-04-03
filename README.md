@@ -66,6 +66,21 @@ This will give you an object which includes the environment variable values for 
 
 There are a load more usage examples at [test/usageExamplesSpec.js](test/usageExamplesSpec.js)
 
+Revisions
+---
+
+v1.0.2: Improved use cases for node/io (also available in the browser)
+ * `readFromObject` now allows you to use one name on environment variables and another name in your codebase.
+   That's important for things like passwords - your environment variable may well be COMPANY_PROJECT_DB_PASS but
+   your codebase might want to use config.get('db.password').  Previously you'd have to use
+   config.get('COMPANY_PROJECT_DB_PASS') which leads to tightly coupled code & configuration - that was not a good thing.
+ * `assertExists` is a new way of managing mandatory configuration - you list the keys
+    you can't manage without and a descriptive error gets thrown if they aren't set or are undefined.
+v1.0.1:
+ * Released to Bower
+v1.0.0: Initial release - the core functionality for managing configuration.
+ * Released to NPM
+
 Contributions
 ---
 
