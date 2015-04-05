@@ -3,6 +3,21 @@ JS Config
 
 An open source project to standardise JS configuration.  It's designed for use in any browser, node.js or io.js.
 
+Insallation & Compatability
+---
+
+This library is designed to be usable in Node.JS, IO.JS and all browsers in-the-wild.  It's self-contained and dependency free.  If you're old-school want to you can just copy & paste this into your code then grab (jsConfig.js)[src/jsConfig.js].  If you're up-to-date with the rest of the world you'll want to use a package manager.  You can install this module using *NPM* or *Bower*.
+
+````shell
+npm install --save js-config
+````
+or
+````shell
+bower install --save js-config
+````
+
+If you think other package managers should be supported (like the one for your favourite backend language) then feel free to raise a Pull Request for it - this library is designed to be assumption-free and should work with any backend language.
+
 Usage Examples
 ---
 
@@ -54,6 +69,35 @@ myConfig.readFromObject(process.env, {
   },
   optionalValueOne: 'ONE_OPTIONAL_VALUE',
   optionalValueTwo: 'ANOTHER_OPTIONAL_VALUE'
+});
+
+expect(myConfig.get('collection.thePassword')).toEqual('secret');
+expect(myConfig.get('optionalValueOne')).toEqual('abc');
+expect(myConfig.get('optionalValueTwo')).toEqual('defghi');
+```
+
+Equally in the browser you can use it to do things like:
+
+(using configFromServer={oneUsePassword:'secret', {parent: {child: {stateBasedValue:'abc'}}})
+
+```javascript
+var myConfig = new JsConfig({
+  someKey: 'someValue',
+  optionalValueTwo: 'defghi',
+  collection: {
+    item: 'a',
+    thePassword: 'default password'
+  }
+});
+
+expect(myConfig.get('collection.thePassword')).toEqual('default password');
+
+myConfig.readFromObject(configFromServer, {
+  collection: {
+    thePassword: 'oneUsePassword'
+  },
+  optionalValueOne: 'parent.child.stateBasedValue',
+  optionalValueTwo: 'parent.sibling.nonexistent'
 });
 
 expect(myConfig.get('collection.thePassword')).toEqual('secret');
