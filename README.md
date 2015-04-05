@@ -6,7 +6,7 @@ An open source project to standardise JS configuration.  It's designed for use i
 Insallation & Compatability
 ---
 
-This library is designed to be usable in Node.JS, IO.JS and all browsers in-the-wild.  It's self-contained and dependency free.  If you're old-school want to you can just copy & paste this into your code then grab [jsConfig.js](src/jsConfig.js).  If you're up-to-date with the rest of the world you'll want to use a package manager.  You can install this module using *NPM* or *Bower*.
+This library is designed to be usable in Node.JS, IO.JS and all browsers in-the-wild.  It's self-contained and dependency free.  If you're old-school want to you can just copy & paste this into your code then grab [JsConfig.js](src/JsConfig.js).  If you're up-to-date with the rest of the world you'll want to use a package manager.  You can install this module using *NPM* or *Bower*.
 
 ````shell
 npm install --save js-config
