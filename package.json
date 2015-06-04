@@ -1,6 +1,6 @@
 {
   "name": "js-config",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A helper for config management in JS - for any browser, node.js and io.js",
   "main": "src/JsConfig.js",
   "directories": {

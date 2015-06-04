@@ -1,5 +1,3 @@
-/*global console*/
-
 var JsConfig = (function () {
   "use strict";
   function loop(arr, callback) {
@@ -12,6 +10,15 @@ var JsConfig = (function () {
         }
       }
     }
+  }
+
+  function isEmpty(obj) {
+    var empty = true;
+    loop(obj, function () {
+      empty = false;
+      return false;
+    });
+    return empty;
   }
 
   function isObject(obj) {
@@ -42,12 +49,16 @@ var JsConfig = (function () {
     if (!this || this.constructor !== JsConfig) {
       throw new Error('JsConfig is an object not a function, you must use `new JsConfig();`');
     }
-    var defaults = {}, data = initialConfig === undefined ? {} : clone(initialConfig);
+    var defaults = [], data = initialConfig === undefined ? {} : clone(initialConfig);
 
     function addToValueObject(key, value, object) {
       eachPart(key, object, function (parent, name, isEnd) {
         parent[name] = isEnd ? clone(value) : (parent[name] || {});
       });
+    }
+
+    function lookupKeyInDefaults(key) {
+      return defaults[key];
     }
 
     function lookupKeyInData(key, obj) {
@@ -67,13 +78,13 @@ var JsConfig = (function () {
     };
 
     this.setDefault = function (key, value) {
-      addToValueObject(key, value, defaults);
+      defaults[key] = clone(value);
     };
 
     this.get = function (key) {
-      var answer = lookupKeyInData(key, data);
+      var answer = lookupKeyInData(key, this.getAll());
       if (answer === undefined) {
-        answer = lookupKeyInData(key, defaults);
+        answer = lookupKeyInDefaults(key);
       }
       return clone(answer);
     };
@@ -97,27 +108,33 @@ var JsConfig = (function () {
     };
 
     this.getAll = function () {
-      var output = clone(defaults);
-
-      function updateWithOverrides(data, output) {
-        loop(data, function (value, key) {
-          if (!isObject(value)) {
-            output[key] = value;
-          } else {
-            output[key] = output[key] || {};
-            updateWithOverrides(data[key], output[key]);
+      var output = clone(data);
+      loop(defaults, function (defaultValue, defaultKey) {
+        var keySoFar = '';
+        eachPart(defaultKey, output, function (value, partName, isFinal) {
+          keySoFar += (keySoFar.length > 0 ? '.' : '') + partName;
+          if (lookupKeyInData(keySoFar, output) === undefined) {
+            value[partName] = isFinal ? defaultValue : {};
           }
         });
-      }
-
-      updateWithOverrides(data, output);
+      });
       return output;
     };
 
     this.remove = function (key) {
-      if (data.hasOwnProperty(key)) {
-        delete data[key];
-      }
+      var toCheck = [];
+      eachPart(key, data, function (parent, name, isFinal) {
+        if (isFinal) {
+          delete parent[name];
+        } else {
+          toCheck.unshift({parent: parent, name: name});
+        }
+      });
+      loop(toCheck, function (value) {
+        if (isEmpty(value.parent[value.name])) {
+          delete value.parent[value.name];
+        }
+      });
     };
 
     this.readFromObject = function (obj, items) {
