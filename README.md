@@ -31,11 +31,9 @@ var myConfig = new JsConfig({
   }
 });
 
-myConfig.setDefault('collection', {
-  item: 'b',
-  another: 'c',
-  overridden: 'd'
-});
+myConfig.setDefault('collection.item', 'b');
+myConfig.setDefault('collection.another', 'c');
+myConfig.setDefault('collection.overriden', 'd');
 
 myConfig.set('collection.overridden', 'e');
 
@@ -113,6 +111,9 @@ There are a load more usage examples at [test/usageExamplesSpec.js](test/usageEx
 Revisions
 ---
 
+v1.0.3:
+ * Tidying up semantics of defaults and overrides with objects (check usage examples for details)
+ * Fix for null values
 v1.0.2: Improved use cases for node/io (also available in the browser)
  * `readFromObject` now allows you to use one name on environment variables and another name in your codebase.
    That's important for things like passwords - your environment variable may well be COMPANY_PROJECT_DB_PASS but
