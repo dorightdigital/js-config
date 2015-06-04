@@ -89,6 +89,10 @@ describe('Usage Examples', function () {
       conf.set('known', 'a');
       expect(conf.get('unknown.doesnt.exist')).toBeUndefined();
     });
+    it('should store and retrieve null value', function () {
+      conf.set('a', null);
+      expect(conf.get('a')).toBe(null);
+    });
     it('should not blow up when asking for a child of an undefined parent', function () {
       expect(conf.get('a.b')).toBeUndefined();
     });

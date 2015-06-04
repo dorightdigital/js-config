@@ -15,7 +15,7 @@ var JsConfig = (function () {
   }
 
   function isObject(obj) {
-    return typeof obj === 'object' && obj.length === undefined;
+    return typeof obj === 'object' && obj !== null && obj.length === undefined;
   }
 
   function clone(original) {
